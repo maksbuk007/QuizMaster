@@ -1,3 +1,7 @@
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getAuth, GoogleAuthProvider } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
 // Конфигурация Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBqstZchhqjqt_QxILoliASxMqlorWbFG0",
@@ -10,24 +14,14 @@ const firebaseConfig = {
 };
 
 // Инициализация Firebase
-if (typeof firebase === 'undefined') {
-  console.error('Firebase SDK not loaded');
-} else {
-  try {
-    // Проверяем, не инициализировано ли уже приложение
-    if (firebase.apps.length === 0) {
-      firebase.initializeApp(firebaseConfig);
-      console.log('Firebase initialized');
-    } else {
-      console.log('Firebase already initialized');
-    }
-    
-    // Создаем глобальные ссылки
-    window.firebaseAuth = firebase.auth();
-    window.firebaseDb = firebase.firestore();
-    window.googleProvider = new firebase.auth.GoogleAuthProvider();
-    
-  } catch (error) {
-    console.error('Firebase initialization error:', error);
-  }
+try {
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const googleProvider = new GoogleAuthProvider();
+
+  // Экспортируем для использования в других модулях
+  export { auth, db, googleProvider };
+} catch (error) {
+  console.error('Firebase initialization error:', error);
 }

@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "kahoot-firebase",
+    "public": "public",
     "ignore": [
       "firebase.json",
       "**/.*",

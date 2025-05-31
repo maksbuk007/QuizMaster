@@ -1,3 +1,7 @@
+import { auth, db, googleProvider } from './firebase.js';
+import { signInWithPopup, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { doc, getDoc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
 // Проверяем, загружены ли Firebase SDK
 if (!window.firebaseAuth || !window.firebaseDb) {
   console.error('Firebase not initialized');
@@ -7,23 +11,23 @@ if (!window.firebaseAuth || !window.firebaseDb) {
   const googleProvider = window.googleProvider;
   
   // Функция входа через Google
-  window.signInWithGoogle = async function() {
+  export async function signInWithGoogle() {
     try {
-      const result = await auth.signInWithPopup(googleProvider);
+      const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
       
       // Проверяем, существует ли пользователь в Firestore
-      const userRef = db.collection("users").doc(user.uid);
-      const userDoc = await userRef.get();
+      const userRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userRef);
       
-      if (!userDoc.exists) {
+      if (!userDoc.exists()) {
         // Создаем нового пользователя
-        await userRef.set({
+        await setDoc(userRef, {
           uid: user.uid,
           displayName: user.displayName,
           email: user.email,
           photoURL: user.photoURL,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          createdAt: serverTimestamp(),
           isAdmin: false,
           achievements: []
         });
@@ -34,24 +38,24 @@ if (!window.firebaseAuth || !window.firebaseDb) {
       console.error("Ошибка входа:", error);
       alert(`Ошибка входа: ${error.message}`);
     }
-  };
+  }
   
   // Функция выхода
-  window.signOutUser = async function() {
+  export async function signOutUser() {
     try {
-      await auth.signOut();
+      await signOut(auth);
     } catch (error) {
       console.error("Ошибка выхода:", error);
     }
-  };
+  }
   
   // Проверка, является ли пользователь администратором
-  window.checkAdmin = async function(uid) {
+  export async function checkAdmin(uid) {
     try {
-      const userRef = db.collection("users").doc(uid);
-      const userDoc = await userRef.get();
+      const userRef = doc(db, "users", uid);
+      const userDoc = await getDoc(userRef);
       
-      if (userDoc.exists) {
+      if (userDoc.exists()) {
         return userDoc.data().isAdmin || false;
       }
       return false;
@@ -59,7 +63,7 @@ if (!window.firebaseAuth || !window.firebaseDb) {
       console.error("Ошибка проверки админа:", error);
       return false;
     }
-  };
+  }
   
   // Обновление UI при изменении состояния аутентификации
   auth.onAuthStateChanged(function(user) {
@@ -75,10 +79,10 @@ if (!window.firebaseAuth || !window.firebaseDb) {
         </div>
       `;
       
-      document.getElementById('logoutBtn')?.addEventListener('click', window.signOutUser);
+      document.getElementById('logoutBtn')?.addEventListener('click', signOutUser);
       
       // Проверяем, является ли администратором
-      window.checkAdmin(user.uid).then(function(isAdmin) {
+      checkAdmin(user.uid).then(function(isAdmin) {
         if (isAdmin) {
           const adminBtn = document.createElement('button');
           adminBtn.id = 'adminBtn';
@@ -95,7 +99,7 @@ if (!window.firebaseAuth || !window.firebaseDb) {
       authStateElement.innerHTML = `
         <button id="loginBtn" class="btn"><i class="fas fa-sign-in-alt"></i> Войти</button>
       `;
-      document.getElementById('loginBtn')?.addEventListener('click', window.signInWithGoogle);
+      document.getElementById('loginBtn')?.addEventListener('click', signInWithGoogle);
     }
   });
 }

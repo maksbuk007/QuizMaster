@@ -1,3 +1,6 @@
+import { auth } from './firebase.js';
+import { checkAdmin } from './auth.js';
+
 document.addEventListener('DOMContentLoaded', function() {
   // Проверяем, загружены ли утилиты
   if (!window.checkAdmin) {
@@ -10,9 +13,9 @@ document.addEventListener('DOMContentLoaded', function() {
   
   if (createGameBtn) {
     createGameBtn.addEventListener('click', async function() {
-      const user = firebase.auth().currentUser;
+      const user = auth.currentUser;
       if (user) {
-        const isAdmin = await window.checkAdmin(user.uid);
+        const isAdmin = await checkAdmin(user.uid);
         if (isAdmin) {
           window.location.href = 'admin.html';
         } else {
