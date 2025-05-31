@@ -13,16 +13,21 @@ document.addEventListener('DOMContentLoaded', function() {
   
   if (createGameBtn) {
     createGameBtn.addEventListener('click', async function() {
-      const user = auth.currentUser;
-      if (user) {
-        const isAdmin = await checkAdmin(user.uid);
-        if (isAdmin) {
-          window.location.href = 'admin.html';
+      try {
+        const user = auth.currentUser;
+        if (user) {
+          const isAdmin = await checkAdmin(user.uid);
+          if (isAdmin) {
+            window.location.href = 'admin.html';
+          } else {
+            alert('Только администраторы могут создавать игры.');
+          }
         } else {
-          alert('Только администраторы могут создавать игры.');
+          alert('Пожалуйста, войдите в систему, чтобы создать игру.');
         }
-      } else {
-        alert('Пожалуйста, войдите в систему, чтобы создать игру.');
+      } catch (error) {
+        console.error('Ошибка при проверке прав администратора:', error);
+        alert('Произошла ошибка при проверке прав администратора.');
       }
     });
   }

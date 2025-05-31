@@ -16,7 +16,11 @@
           <h1>QuizMaster</h1>
         </a>
       </div>
-      <div id="authState"></div>
+      <div id="authState">
+        <button id="loginBtn" class="btn btn-primary">
+          <i class="fas fa-sign-in-alt"></i> Войти
+        </button>
+      </div>
     </header>
     
     <main>
@@ -65,7 +69,13 @@
     import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
     
     const firebaseConfig = {
-      // Ваша конфигурация Firebase будет здесь
+      apiKey: "AIzaSyBqstZchhqjqt_QxILoliASxMqlorWbFG0",
+      authDomain: "quiz-master-3edcc.firebaseapp.com",
+      databaseURL: "https://quiz-master-3edcc-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "quiz-master-3edcc",
+      storageBucket: "quiz-master-3edcc.firebasestorage.app",
+      messagingSenderId: "876503925337",
+      appId: "1:876503925337:web:06f391c45c3ef00d312748"
     };
     
     const app = initializeApp(firebaseConfig);
