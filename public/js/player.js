@@ -1,5 +1,6 @@
 import { db } from './firebase.js';
 import { checkAchievements } from './achievements.js';
+import { collection, doc, addDoc, updateDoc, getDocs, query, where, onSnapshot, increment, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 let gameId = null;
 let playerId = null;
@@ -40,8 +41,9 @@ joinForm.addEventListener('submit', async (e) => {
   
   try {
     // Поиск игры по коду
-    const gamesRef = db.collection("games");
-    const querySnapshot = await gamesRef.where("gameCode", "==", gameCode).get();
+    const gamesRef = collection(db, "games");
+    const q = query(gamesRef, where("gameCode", "==", gameCode));
+    const querySnapshot = await getDocs(q);
     
     if (querySnapshot.empty) {
       alert('Игра с таким кодом не найдена');
@@ -59,11 +61,12 @@ joinForm.addEventListener('submit', async (e) => {
     }
     
     // Регистрируем игрока
-    const playerRef = await db.collection(`games/${gameId}/players`).add({
+    const playersRef = collection(db, `games/${gameId}/players`);
+    const playerRef = await addDoc(playersRef, {
       name: playerName,
       score: 0,
       answers: {},
-      joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      joinedAt: serverTimestamp(),
       achievements: []
     });
     
@@ -86,9 +89,9 @@ joinForm.addEventListener('submit', async (e) => {
 
 // Прослушивание изменений в игре
 function listenToGame(gameId) {
-  const gameRef = db.collection("games").doc(gameId);
+  const gameRef = doc(db, "games", gameId);
   
-  gameRef.onSnapshot((doc) => {
+  onSnapshot(gameRef, (doc) => {
     const game = doc.data();
     if (!game) return;
     
@@ -155,8 +158,8 @@ function showQuestion(game) {
 async function submitAnswer(answerIndex, game) {
   try {
     // Сохраняем ответ игрока
-    const playerRef = db.collection(`games/${gameId}/players`).doc(playerId);
-    await playerRef.update({
+    const playerRef = doc(db, `games/${gameId}/players`, playerId);
+    await updateDoc(playerRef, {
       [`answers.${currentQuestionIndex}`]: answerIndex
     });
     
@@ -169,8 +172,8 @@ async function submitAnswer(answerIndex, game) {
     const isCorrect = answerIndex === game.questions[currentQuestionIndex].correctAnswer;
     if (isCorrect) {
       playerScore += 100;
-      await playerRef.update({
-        score: firebase.firestore.FieldValue.increment(100)
+      await updateDoc(playerRef, {
+        score: increment(100)
       });
     }
     
@@ -233,8 +236,8 @@ async function showFinalResults(game) {
   resultScreen.classList.remove('hidden');
   
   // Получаем игроков и сортируем по очкам
-  const playersRef = db.collection(`games/${gameId}/players`);
-  const playersSnapshot = await playersRef.get();
+  const playersRef = collection(db, `games/${gameId}/players`);
+  const playersSnapshot = await getDocs(playersRef);
   const players = [];
   
   playersSnapshot.forEach(doc => {
@@ -249,49 +252,31 @@ async function showFinalResults(game) {
     const isCurrent = player.id === playerId;
     leaderboard.innerHTML += `
       <li class="${isCurrent ? 'current-player' : ''}">
-        <span class="player-position">${index + 1}.</span>
-        <span class="player-name">${player.name}</span>
-        <span class="player-score">${player.score} очков</span>
+        ${index + 1}. ${player.name} - ${player.score} очков
       </li>
     `;
   });
   leaderboard.innerHTML += '</ol>';
   
-  // Показываем достижения текущего игрока
+  // Показываем достижения
   const currentPlayer = players.find(p => p.id === playerId);
-  if (currentPlayer && currentPlayer.achievements && currentPlayer.achievements.length > 0) {
+  if (currentPlayer && currentPlayer.achievements) {
     badgesContainer.innerHTML = '';
-    
-    currentPlayer.achievements.forEach(badgeId => {
-      // Загрузка информации о бейдже
-      db.collection("achievements").doc(badgeId).get().then(badgeDoc => {
-        if (badgeDoc.exists) {
-          const badge = badgeDoc.data();
-          const badgeElement = document.createElement('div');
-          badgeElement.className = 'badge';
-          badgeElement.title = `${badge.name}\n${badge.description}`;
-          
-          if (badge.badgeUrl) {
-            badgeElement.innerHTML = `<img src="${badge.badgeUrl}" alt="${badge.name}">`;
-          } else {
-            badgeElement.innerHTML = '<i class="fas fa-medal"></i>';
-          }
-          
-          badgesContainer.appendChild(badgeElement);
-        }
-      });
+    currentPlayer.achievements.forEach(achievement => {
+      badgesContainer.innerHTML += `
+        <div class="badge">
+          <img src="images/badges/${achievement.id}.png" alt="${achievement.name}">
+          <span>${achievement.name}</span>
+        </div>
+      `;
     });
-  } else {
-    badgesContainer.innerHTML = '<p>Вы пока не получили достижений</p>';
   }
-  
-  // Обработчик кнопки "Играть снова"
-  playAgainBtn.addEventListener('click', () => {
-    resultScreen.classList.add('hidden');
-    joinScreen.classList.remove('hidden');
-    gameId = null;
-    playerId = null;
-    playerScore = 0;
-    currentQuestionIndex = 0;
-  });
 }
+
+// Обработчик кнопки "Играть снова"
+playAgainBtn.addEventListener('click', () => {
+  resultScreen.classList.add('hidden');
+  joinScreen.classList.remove('hidden');
+  document.getElementById('gameCodeInput').value = '';
+  document.getElementById('playerNameInput').value = '';
+});

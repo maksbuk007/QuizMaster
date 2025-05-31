@@ -1,11 +1,8 @@
+import { db } from './firebase.js';
+import { collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
 // Генерация уникального 8-значного кода игры
-window.generateGameCode = async function() {
-  if (!window.firebaseDb) {
-    console.error('Firebase not initialized');
-    return '';
-  }
-  
-  const db = window.firebaseDb;
+export async function generateGameCode() {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let code = '';
   let isUnique = false;
@@ -18,8 +15,9 @@ window.generateGameCode = async function() {
     
     try {
       // Проверяем уникальность кода
-      const gamesRef = db.collection('games');
-      const querySnapshot = await gamesRef.where('gameCode', '==', code).get();
+      const gamesRef = collection(db, 'games');
+      const q = query(gamesRef, where('gameCode', '==', code));
+      const querySnapshot = await getDocs(q);
       isUnique = querySnapshot.empty;
     } catch (error) {
       console.error('Error checking game code uniqueness:', error);
@@ -28,21 +26,21 @@ window.generateGameCode = async function() {
   }
   
   return code;
-};
+}
 
 // Форматирование времени
-window.formatTime = function(seconds) {
+export function formatTime(seconds) {
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
   return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-};
+}
 
 // Генерация случайного ID
-window.generateId = function(length = 8) {
+export function generateId(length = 8) {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
   for (let i = 0; i < length; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   return result;
-};
+}

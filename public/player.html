@@ -76,15 +76,34 @@
   </div>
   
   <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyBqstZchhqjqt_QxILoliASxMqlorWbFG0",
+      authDomain: "quiz-master-3edcc.firebaseapp.com",
+      databaseURL: "https://quiz-master-3edcc-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "quiz-master-3edcc",
+      storageBucket: "quiz-master-3edcc.firebasestorage.app",
+      messagingSenderId: "876503925337",
+      appId: "1:876503925337:web:06f391c45c3ef00d312748",
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    
+    window.auth = auth;
+    window.db = db;
+  </script>
   
   <!-- App Scripts -->
-  <script src="js/firebase.js"></script>
-  <script src="js/auth.js"></script>
-  <script src="js/utils.js"></script>
-  <script src="js/achievements.js"></script>
-  <script src="js/player.js"></script>
+  <script type="module" src="js/firebase.js"></script>
+  <script type="module" src="js/auth.js"></script>
+  <script type="module" src="js/utils.js"></script>
+  <script type="module" src="js/achievements.js"></script>
+  <script type="module" src="js/player.js"></script>
 </body>
 </html>

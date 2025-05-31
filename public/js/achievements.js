@@ -1,4 +1,5 @@
 import { db } from './firebase.js';
+import { doc, getDoc, updateDoc, arrayUnion } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 // Определения достижений
 export const achievements = [
@@ -7,10 +8,10 @@ export const achievements = [
     name: 'Первая кровь',
     description: 'Правильно ответить на первый вопрос в игре',
     check: async (playerId, gameId) => {
-      const playerRef = db.collection(`games/${gameId}/players`).doc(playerId);
-      const playerDoc = await playerRef.get();
+      const playerRef = doc(db, `games/${gameId}/players`, playerId);
+      const playerDoc = await getDoc(playerRef);
       
-      if (playerDoc.exists) {
+      if (playerDoc.exists()) {
         const playerData = playerDoc.data();
         return playerData.answers && playerData.answers[0] !== undefined;
       }
@@ -31,15 +32,15 @@ export const achievements = [
     name: 'Идеальный результат',
     description: 'Ответить правильно на все вопросы',
     check: async (playerId, gameId) => {
-      const playerRef = db.collection(`games/${gameId}/players`).doc(playerId);
-      const playerDoc = await playerRef.get();
+      const playerRef = doc(db, `games/${gameId}/players`, playerId);
+      const playerDoc = await getDoc(playerRef);
       
-      if (playerDoc.exists) {
+      if (playerDoc.exists()) {
         const playerData = playerDoc.data();
-        const gameRef = db.collection("games").doc(gameId);
-        const gameDoc = await gameRef.get();
+        const gameRef = doc(db, "games", gameId);
+        const gameDoc = await getDoc(gameRef);
         
-        if (gameDoc.exists) {
+        if (gameDoc.exists()) {
           const gameData = gameDoc.data();
           const totalQuestions = gameData.questions.length;
           let correctAnswers = 0;
@@ -62,11 +63,11 @@ export const achievements = [
 
 // Проверка достижений
 export const checkAchievements = async (playerId, gameId) => {
-  const playerRef = db.collection(`games/${gameId}/players`).doc(playerId);
+  const playerRef = doc(db, `games/${gameId}/players`, playerId);
   
   for (const achievement of achievements) {
     // Проверяем, есть ли уже это достижение у игрока
-    const playerDoc = await playerRef.get();
+    const playerDoc = await getDoc(playerRef);
     const playerData = playerDoc.data();
     
     if (playerData.achievements && playerData.achievements.includes(achievement.id)) {
@@ -84,8 +85,8 @@ export const checkAchievements = async (playerId, gameId) => {
 // Награждение бейджем
 export const awardBadge = async (playerRef, badgeId) => {
   try {
-    await playerRef.update({
-      achievements: firebase.firestore.FieldValue.arrayUnion(badgeId)
+    await updateDoc(playerRef, {
+      achievements: arrayUnion(badgeId)
     });
     console.log(`Игрок награжден бейджем: ${badgeId}`);
   } catch (error) {
