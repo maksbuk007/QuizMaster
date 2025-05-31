@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Игрок | QuizMaster</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/player.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1><i class="fas fa-gamepad"></i> QuizMaster</h1>
+      <div id="playerInfo"></div>
+    </header>
+    
+    <main>
+      <div id="joinScreen">
+        <h2>Присоединиться к игре</h2>
+        <form id="joinForm">
+          <div class="form-group">
+            <label for="gameCodeInput">Код игры</label>
+            <input type="text" id="gameCodeInput" placeholder="Введите 8-значный код" required maxlength="8">
+          </div>
+          
+          <div class="form-group">
+            <label for="playerNameInput">Ваше имя</label>
+            <input type="text" id="playerNameInput" placeholder="Как вас зовут?" required>
+          </div>
+          
+          <button type="submit" class="btn btn-primary">Присоединиться</button>
+        </form>
+      </div>
+      
+      <div id="gameScreen" class="hidden">
+        <div id="questionContainer">
+          <!-- Вопрос будет отображаться здесь -->
+        </div>
+        
+        <div id="optionsContainer">
+          <!-- Варианты ответов -->
+        </div>
+        
+        <div id="timerContainer">
+          <div id="timerBar"></div>
+          <div id="timerText">15</div>
+        </div>
+      </div>
+      
+      <div id="resultScreen" class="hidden">
+        <h2>Результаты</h2>
+        <div id="leaderboard">
+          <!-- Таблица лидеров -->
+        </div>
+        <div id="achievements">
+          <h3>Ваши достижения</h3>
+          <div class="badges-container">
+            <!-- Бейджи будут здесь -->
+          </div>
+        </div>
+        <button id="playAgainBtn" class="btn btn-primary">Играть снова</button>
+      </div>
+    </main>
+    
+    <footer>
+      <p>&copy; 2025 QuizMaster</p>
+    </footer>
+  </div>
+  
+  <script src="js/firebase.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/achievements.js"></script>
+</body>
+</html>

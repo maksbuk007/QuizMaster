@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ведущий | QuizMaster</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/host.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo-container">
+        <img src="images/logo.png" alt="QuizMaster Logo" class="logo">
+        <h1>Панель ведущего</h1>
+      </div>
+      <div id="authState"></div>
+    </header>
+    
+    <main>
+      <div id="gameInfo">
+        <h2 id="gameTitle">Название игры</h2>
+        <p>Код игры: <strong id="gameCode"></strong></p>
+        <p id="gameStatus">Статус: <span id="statusText">Ожидание</span></p>
+      </div>
+      
+      <div id="playersList">
+        <h3>Игроки (<span id="playersCount">0</span>)</h3>
+        <div id="playersContainer"></div>
+      </div>
+      
+      <div class="game-controls">
+        <button id="startGameBtn" class="btn btn-primary">
+          <i class="fas fa-play"></i> Начать игру
+        </button>
+        <button id="nextQuestionBtn" class="btn btn-secondary" disabled>
+          <i class="fas fa-forward"></i> Следующий вопрос
+        </button>
+        <button id="endGameBtn" class="btn btn-danger">
+          <i class="fas fa-stop"></i> Завершить игру
+        </button>
+      </div>
+      
+      <div id="questionPanel" class="hidden">
+        <h3>Текущий вопрос</h3>
+        <div id="questionContainer"></div>
+        <div id="optionsContainer"></div>
+        
+        <div id="timerContainer">
+          <div id="timerBar"></div>
+          <div id="timerText">15</div>
+        </div>
+      </div>
+    </main>
+    
+    <footer>
+      <p>&copy; 2023 QuizMaster</p>
+    </footer>
+  </div>
+  
+  <script src="js/firebase.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/host.js"></script>
+</body>
+</html>

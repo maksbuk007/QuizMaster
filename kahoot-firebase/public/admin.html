@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Панель администратора | QuizMaster</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo-container">
+        <img src="images/logo.png" alt="QuizMaster Logo" class="logo">
+        <h1>Панель администратора</h1>
+      </div>
+      <div id="authState"></div>
+    </header>
+    
+    <main>
+      <div class="admin-panel">
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="games">Игры</button>
+          <button class="tab-btn" data-tab="create-game">Создать игру</button>
+          <button class="tab-btn" data-tab="achievements">Достижения</button>
+        </div>
+        
+        <div class="tab-content active" id="games-tab">
+          <h2>Управление играми</h2>
+          <div class="games-list">
+            <!-- Список игр будет загружен динамически -->
+          </div>
+        </div>
+        
+        <div class="tab-content" id="create-game-tab">
+          <h2>Создать новую игру</h2>
+          <form id="gameForm">
+            <div class="form-group">
+              <label for="gameTitle">Название игры</label>
+              <input type="text" id="gameTitle" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="gameTheme">Тема</label>
+              <select id="gameTheme" required>
+                <option value="general">Общие знания</option>
+                <option value="science">Наука</option>
+                <option value="history">История</option>
+                <option value="sports">Спорт</option>
+                <option value="movies">Фильмы</option>
+                <option value="music">Музыка</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="gameDescription">Описание</label>
+              <textarea id="gameDescription" rows="3"></textarea>
+            </div>
+            
+            <div class="form-group">
+              <label>Вопросы</label>
+              <div id="questionsContainer">
+                <!-- Вопросы будут добавляться динамически -->
+              </div>
+              <button type="button" id="addQuestionBtn" class="btn btn-secondary">
+                <i class="fas fa-plus"></i> Добавить вопрос
+              </button>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Создать игру</button>
+          </form>
+        </div>
+        
+        <div class="tab-content" id="achievements-tab">
+          <h2>Управление достижениями</h2>
+          <div class="achievements-list">
+            <!-- Список достижений будет загружен динамически -->
+          </div>
+          <button id="addAchievementBtn" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Добавить достижение
+          </button>
+        </div>
+      </div>
+    </main>
+    
+    <footer>
+      <p>&copy; 2023 QuizMaster</p>
+    </footer>
+  </div>
+  
+  <!-- Шаблоны -->
+  <template id="questionTemplate">
+    <div class="question-item">
+      <div class="question-header">
+        <h3>Вопрос <span class="question-number">1</span></h3>
+        <button type="button" class="btn btn-danger delete-question">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+      
+      <div class="form-group">
+        <label>Текст вопроса</label>
+        <input type="text" class="question-text" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Тип вопроса</label>
+        <select class="question-type">
+          <option value="text">Текст</option>
+          <option value="image">Изображение</option>
+          <option value="video">Видео</option>
+        </select>
+      </div>
+      
+      <div class="form-group media-url hidden">
+        <label>Ссылка на медиа</label>
+        <input type="url" class="media-url-input">
+      </div>
+      
+      <div class="form-group">
+        <label>Варианты ответов (минимум 2)</label>
+        <div class="options-container">
+          <!-- Варианты будут добавляться здесь -->
+        </div>
+        <button type="button" class="btn btn-secondary add-option">
+          <i class="fas fa-plus"></i> Добавить вариант
+        </button>
+      </div>
+      
+      <div class="form-group">
+        <label>Правильный ответ</label>
+        <select class="correct-answer" required>
+          <!-- Заполнится динамически -->
+        </select>
+      </div>
+    </div>
+  </template>
+  
+  <template id="optionTemplate">
+    <div class="option-item">
+      <input type="text" class="option-text" placeholder="Текст варианта" required>
+      <button type="button" class="btn btn-danger delete-option">
+        <i class="fas fa-trash"></i>
+      </button>
+    </div>
+  </template>
+  
+  <template id="achievementTemplate">
+    <div class="achievement-item">
+      <div class="achievement-header">
+        <h3 data-field="name">Название достижения</h3>
+        <div class="achievement-actions">
+          <button class="btn btn-edit" data-id=""><i class="fas fa-edit"></i></button>
+          <button class="btn btn-delete" data-id=""><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+      <p data-field="description">Описание достижения</p>
+      <div class="badge-preview" data-field="badge">
+        <div class="badge-placeholder"><i class="fas fa-medal"></i></div>
+      </div>
+    </div>
+  </template>
+  
+  <template id="gameCardTemplate">
+    <div class="game-card">
+      <h3 class="game-title">Название игры</h3>
+      <p class="game-theme">Тема: Общие знания</p>
+      <p class="game-code">Код: <strong>ABC12345</strong></p>
+      <p class="game-status">Статус: <span class="status-text">Неактивна</span></p>
+      <div class="game-actions">
+        <button class="btn btn-edit" data-id=""><i class="fas fa-edit"></i></button>
+        <button class="btn btn-delete" data-id=""><i class="fas fa-trash"></i></button>
+        <button class="btn btn-toggle" data-id=""><i class="fas fa-play"></i></button>
+      </div>
+    </div>
+  </template>
+  
+  <script src="js/firebase.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
