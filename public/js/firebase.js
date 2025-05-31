@@ -1,3 +1,4 @@
+// Конфигурация Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBqstZchhqjqt_QxILoliASxMqlorWbFG0",
   authDomain: "quiz-master-3edcc.firebaseapp.com",
@@ -9,12 +10,24 @@ const firebaseConfig = {
 };
 
 // Инициализация Firebase
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
-
-// Провайдеры аутентификации
-const googleProvider = new firebase.auth.GoogleAuthProvider();
-
-// Экспорт
-export { auth, db, googleProvider };
+if (typeof firebase === 'undefined') {
+  console.error('Firebase SDK not loaded');
+} else {
+  try {
+    // Проверяем, не инициализировано ли уже приложение
+    if (firebase.apps.length === 0) {
+      firebase.initializeApp(firebaseConfig);
+      console.log('Firebase initialized');
+    } else {
+      console.log('Firebase already initialized');
+    }
+    
+    // Создаем глобальные ссылки
+    window.firebaseAuth = firebase.auth();
+    window.firebaseDb = firebase.firestore();
+    window.googleProvider = new firebase.auth.GoogleAuthProvider();
+    
+  } catch (error) {
+    console.error('Firebase initialization error:', error);
+  }
+}

@@ -9,6 +9,10 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+  <a href="/" class="home-btn">
+    <i class="fas fa-home"></i> Домой
+  </a>
+  
   <div class="container">
     <header>
       <div class="logo-container">
@@ -162,20 +166,12 @@
     </div>
   </template>
   
-  <template id="gameCardTemplate">
-    <div class="game-card">
-      <h3 class="game-title">Название игры</h3>
-      <p class="game-theme">Тема: Общие знания</p>
-      <p class="game-code">Код: <strong>ABC12345</strong></p>
-      <p class="game-status">Статус: <span class="status-text">Неактивна</span></p>
-      <div class="game-actions">
-        <button class="btn btn-edit" data-id=""><i class="fas fa-edit"></i></button>
-        <button class="btn btn-delete" data-id=""><i class="fas fa-trash"></i></button>
-        <button class="btn btn-toggle" data-id=""><i class="fas fa-play"></i></button>
-      </div>
-    </div>
-  </template>
+   <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   
+  <!-- App Scripts -->
   <script src="js/firebase.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/utils.js"></script>
