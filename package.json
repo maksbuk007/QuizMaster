@@ -1,0 +1,8 @@
+{
+  "name": "quiz-master",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "cp -r kahoot-firebase/public/* public/",
+    "start": "serve public"
+  }
+}
